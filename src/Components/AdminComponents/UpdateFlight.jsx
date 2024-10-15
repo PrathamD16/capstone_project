@@ -15,6 +15,8 @@ const UpdateFlight = () => {
   const [destination, setDestination] = useState("");
   const [source, setSource] = useState("");
   const [booked, setBookedSeats] = useState(0);
+  const [btnDisable, setBtnDisable] = useState(true)
+  const [minDate, setMinDate] = useState()
 
   useEffect(() => {
     const getSingleFlight = async () => {
@@ -34,6 +36,21 @@ const UpdateFlight = () => {
     };
     getSingleFlight();
   }, []);
+
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0];
+    setMinDate(today);
+    console.log(booked)
+    console.log(totalSeats)
+    if(booked > -1 && booked < totalSeats && totalSeats > 0 && cost > -1 && name != '' && destination != '' && source != '' && date != null && time != null){
+      setBtnDisable(false)
+    }
+    else{
+      setBtnDisable(true)
+    }
+  }, [booked, totalSeats, cost, date, time, source, destination, name])
+
+  
 
   const updateFlightHandler = (e) => {
     e.preventDefault()
@@ -97,6 +114,7 @@ const UpdateFlight = () => {
           />
           <input
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            min={minDate}
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
@@ -126,8 +144,9 @@ const UpdateFlight = () => {
             required
           />
           <button
+            disabled={btnDisable}
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
+            className={`w-full text-white py-2 rounded-md ${btnDisable ? `bg-blue-300` : `bg-blue-600 hover:bg-blue-700 transition duration-200`}`}
           >
             Add Flight
           </button>

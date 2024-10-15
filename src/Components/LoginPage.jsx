@@ -30,7 +30,7 @@ const LoginPage = () => {
 
     axios
       .post(
-        "http://localhost:8081/user-service/api/authenticate-auth/authenticate",
+        `http://localhost:8081/user-service/api/authenticate-auth/authenticate`,
         credResponse
       )
       .then((data) => {

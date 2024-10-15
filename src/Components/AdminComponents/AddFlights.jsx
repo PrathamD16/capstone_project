@@ -54,7 +54,7 @@ const AddFlights = () => {
     else{
       setBtnDisable(true)
     }
-  }, [booked, totalSeats, cost])
+  }, [booked, totalSeats, cost, date, time, source, destination, name])
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
