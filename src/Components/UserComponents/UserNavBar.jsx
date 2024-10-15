@@ -10,12 +10,14 @@ const UserNavBar = () => {
     if(byEmail.length <= 0 && signedIn === false){
       nav('/login')
     }
+    
     else{
       updateEmail(false)
       setAdmin(null)
       updateEmail('')
       updateSignIn(false)
       setUserName('')
+      nav('/')
     }
   }
 

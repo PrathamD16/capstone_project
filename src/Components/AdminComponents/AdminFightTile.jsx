@@ -23,7 +23,7 @@ const AdminFightTile = ({ flight }) => {
   };
 
   return (
-    <div className="bg-gray-100 shadow-lg my-3 p-3 rounded-md hover:scale-[102%] mx-5 px-[1rem]">
+    <div className="bg-gray-100 shadow-lg my-3 p-3 rounded-md mx-5 px-[1rem]">
       <div className="flex justify-center">
         <h3 className="text-md font-semibold">
           Flight Name: <span className="font-mono text-xl"> {flight.name}</span>
