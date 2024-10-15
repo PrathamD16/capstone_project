@@ -148,7 +148,7 @@ const UpdateFlight = () => {
             type="submit"
             className={`w-full text-white py-2 rounded-md ${btnDisable ? `bg-blue-300` : `bg-blue-600 hover:bg-blue-700 transition duration-200`}`}
           >
-            Add Flight
+            Update Flight
           </button>
         </form>
       </div>
