@@ -35,11 +35,11 @@ const AddFlights = () => {
         newPlane
       )
       .then((x) => {
-        console.log(newPlane);
+        
         nav("/admin");
       })
       .catch((err) => {
-        console.log(err);
+        
       });
 
     // Handle sending the data to your backend here (e.g., using axios)

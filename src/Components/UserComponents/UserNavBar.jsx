@@ -21,8 +21,8 @@ const UserNavBar = () => {
 
   return (
     <div className="top-0 sticky">
-      <nav className="space-y-5 bg-slate-800 text-white py-3 px-[1rem]">
-        <p className="text-xl">Welcome, to the FBA {signedIn ? username : ``}</p>
+      <nav className="space-y-5 bg-gradient-to-l from-blue-500 to-slate-800 text-white py-3 px-[1rem]">
+        <p className="text-xl">Welcome, to the SABA {signedIn ? username : ``}</p>
         <ul className="text-sm">
           <div className="flex justify-between">
             <div className="flex space-x-5">

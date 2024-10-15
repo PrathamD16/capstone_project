@@ -20,14 +20,17 @@ const UserDashboard = () => {
     console.log(flights)
   }, [des, src, date])
 
+
+
   return (
-    <div className='space-y-5'>
+    <div className='space-y-5  '>
       <div className='mx-5 flex justify-center my-5 space-x-5'>
         <input className='flex-1 border-solid border-2 rounded-md p-2' placeholder='FROM' type="text" onChange={e => setSrc(e.target.value)} />
         <input className='flex-1 border-solid border-2 rounded-md p-2' placeholder='TO' type="text" onChange={e => setDes(e.target.value)} />
         <input className='flex-1 border-solid border-2 rounded-md p-2' value={date} placeholder='date' type="date" onChange={e => updateDate(e.target.value)} />
+        
       </div>
-      <div className='mx-5'>
+      <div className='mx-5 '>
         {
           flights.map((flight, _i) => {
             return (

@@ -18,7 +18,7 @@ const FlightList = () => {
       setFlights(res.data);
     };
     fetchData();
-    console.log(flights);
+    
   }, [des, src, date]);
 
   return <div>

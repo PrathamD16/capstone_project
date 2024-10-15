@@ -1,11 +1,14 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import {UserEmailContext} from '../../Context/CredContext'
 
 const UpdateFlight = () => {
   const { fid } = useParams();
 
   const nav = useNavigate()
+
+  const {signedIn} = useContext(UserEmailContext)
 
   const [name, setName] = useState("");
   const [cost, setCost] = useState(0);
@@ -40,8 +43,8 @@ const UpdateFlight = () => {
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
     setMinDate(today);
-    console.log(booked)
-    console.log(totalSeats)
+    
+    
     if(booked > -1 && booked < totalSeats && totalSeats > 0 && cost > -1 && name != '' && destination != '' && source != '' && date != null && time != null){
       setBtnDisable(false)
     }
@@ -66,11 +69,11 @@ const UpdateFlight = () => {
 
     axios.patch(`http://localhost:5000/flight-service/api/admin/updateFlight/${parseInt(fid)}`, updatePlane)
     .then(data => {
-      console.log(data)
+      
       nav("/admin")
     })
     .catch(err => {
-      console.log(err)
+      
     })
 
   };
@@ -143,13 +146,15 @@ const UpdateFlight = () => {
             onChange={(e) => setDestination(e.target.value)}
             required
           />
-          <button
+          {
+            signedIn ? <button
             disabled={btnDisable}
             type="submit"
             className={`w-full text-white py-2 rounded-md ${btnDisable ? `bg-blue-300` : `bg-blue-600 hover:bg-blue-700 transition duration-200`}`}
           >
             Update Flight
-          </button>
+          </button> : <></>
+          }
         </form>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { data } from 'autoprefixer';
 
 const SignUpPage = () => {
 
@@ -35,6 +36,11 @@ const SignUpPage = () => {
       return;
     }
 
+    if(email.includes('@') && email.includes('.com')){
+      setError('Invalid Email Format!!')
+      return ;
+    }
+
     const newUser = {
       email,
       password,
@@ -44,12 +50,16 @@ const SignUpPage = () => {
 
     // console.log(newUser)
     axios.post(`http://localhost:8081/user-service/api/authenticate-auth/addUser`, newUser)
-    .then((date) => {
-      console.log(date)
-      nav("/login")
+    .then((res) => {
+      if(res.data === true){
+        nav("/login")
+      }
+      else{
+        setError('Email Id Already exists!! Use another email id')
+      }
     })
     .catch(err => {
-      console.log(err)
+      
     })
 
   }
@@ -62,7 +72,7 @@ const SignUpPage = () => {
         <form onSubmit={submitHandler} className="space-y-4">
           <input
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            type="text"
+            type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

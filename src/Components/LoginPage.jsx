@@ -35,7 +35,7 @@ const LoginPage = () => {
       )
       .then((data) => {
         const res = data.data;
-        console.log(res);
+        
         if (res.email === email && res.password === password) {
           updateSignIn(true)
           updateEmail(res.email);
@@ -51,12 +51,12 @@ const LoginPage = () => {
           setError(`Invalid Credentials`)
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {});
     setError('')
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="flex items-center justify-center h-screen bg-gradient-to-tr from-blue-300 to-slate-100">
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-semibold text-center mb-6">
           Welcome to Login Page

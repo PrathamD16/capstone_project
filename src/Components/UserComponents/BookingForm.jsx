@@ -8,7 +8,7 @@ const BookingForm = () => {
 
   const { fid } = useParams();
 
-  const { byEmail } = useContext(UserEmailContext);
+  const { byEmail, signedIn } = useContext(UserEmailContext);
 
   const [cname, setCname] = useState("");
   const [contact, setContact] = useState(0);
@@ -88,74 +88,86 @@ const BookingForm = () => {
   // name, contact, gender, age
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h3 className="text-xl font-semibold text-center mb-4">Passenger Detail Form</h3>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        <form className="space-y-5" onSubmit={submitHandler}>
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            type="text"
-            placeholder="Enter your name"
-            value={cname}
-            onChange={(e) => setCname(e.target.value)}
-            required
-          />
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            type="number"
-            placeholder="Enter your contact number"
-            value={contact}
-            onChange={(e) => setContact(e.target.value)}
-            required
-          />
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            type="number"
-            placeholder="Enter your age"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            required
-          />
-          <div className="px-4">
-            <span className="block mb-2">Select your gender:</span>
-            <label className="mr-4">
-              <input
-                type="checkbox"
-                value="male"
-                checked={gender.includes("male")}
-                onChange={handleGenderChange}
-              />
-              Male
-            </label>
-            <label className="mr-4">
-              <input
-                type="checkbox"
-                value="female"
-                checked={gender.includes("female")}
-                onChange={handleGenderChange}
-              />
-              Female
-            </label>
-            <label className="mr-4">
-              <input
-                type="checkbox"
-                value="other"
-                checked={gender.includes("other")}
-                onChange={handleGenderChange}
-              />
-              Other
-            </label>
-          </div>
-          <button
-            disabled={btnDisable}
-            type="submit"
-            className={`${btnDisable == true ? `w-full bg-blue-200 text-white py-2 rounded-md`: `w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200`}`}
-          >
-            Book Ticket
-          </button>
-        </form>
+  <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+    <h3 className="text-xl font-semibold text-center mb-4">Passenger Detail Form</h3>
+    {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+    <form className="space-y-5" onSubmit={submitHandler}>
+      <div>
+        <span className="block mb-1">Enter your name:</span>
+        <input
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          type="text"
+          value={cname}
+          onChange={(e) => setCname(e.target.value)}
+          required
+        />
       </div>
-    </div>
+      <div>
+        <span className="block mb-1">Enter your contact number:</span>
+        <input
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          type="number"
+          value={contact}
+          onChange={(e) => setContact(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <span className="block mb-1">Enter your age:</span>
+        <input
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          type="number"
+          value={age}
+          onChange={(e) => setAge(e.target.value)}
+          required
+        />
+      </div>
+      <div className="px-4">
+        <span className="block mb-2">Select your gender:</span>
+        <label className="mr-4">
+          <input
+            type="checkbox"
+            value="male"
+            checked={gender.includes("male")}
+            onChange={handleGenderChange}
+          />
+          Male
+        </label>
+        <label className="mr-4">
+          <input
+            type="checkbox"
+            value="female"
+            checked={gender.includes("female")}
+            onChange={handleGenderChange}
+          />
+          Female
+        </label>
+        <label className="mr-4">
+          <input
+            type="checkbox"
+            value="other"
+            checked={gender.includes("other")}
+            onChange={handleGenderChange}
+          />
+          Other
+        </label>
+      </div>
+      {
+        
+      }
+      {
+        signedIn ? <button
+        disabled={btnDisable}
+        type="submit"
+        className={`${btnDisable ? 'w-full bg-blue-200 text-white py-2 rounded-md' : 'w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200'}`}
+      >
+        Book Ticket
+      </button> : <></>
+      }
+    </form>
+  </div>
+</div>
+
   );
 };
 

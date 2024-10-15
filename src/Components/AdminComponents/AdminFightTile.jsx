@@ -4,23 +4,23 @@ import { UserEmailContext } from "../../Context/CredContext";
 import axios from "axios";
 
 const AdminFightTile = ({ flight }) => {
-
-  const nav = useNavigate()
-  const { byEmail, isAdmin } = useContext(UserEmailContext);
+  const nav = useNavigate();
+  const { byEmail, isAdmin, signedIn } = useContext(UserEmailContext);
 
   const updateHandler = () => {
     nav(`/admin/editflight/${flight.id}`);
   };
 
   const deleteHandler = () => {
-    axios.delete(`http://localhost:5000/flight-service/api/admin/deleteMapping/${flight.id}`)
-    .then(() => {
-      nav('/admin')
-    })
-    .catch(err => {
-      console.log(err)
-    })
-  }
+    axios
+      .delete(
+        `http://localhost:5000/flight-service/api/admin/deleteMapping/${flight.id}`
+      )
+      .then(() => {
+        nav("/admin");
+      })
+      .catch((err) => {});
+  };
 
   return (
     <div className="bg-gray-100 shadow-lg my-3 p-3 rounded-md hover:scale-[102%] mx-5 px-[1rem]">
@@ -69,15 +69,24 @@ const AdminFightTile = ({ flight }) => {
           </p>
           <p>Seats available: {flight.total_seats - flight.booked_seats}</p>
           <div className="space-x-6">
-            <button onClick={deleteHandler} className="bg-red-600 text-white py-2 p-5 rounded-md hover:bg-red-900 hover:text-white">
-              Delete Flight
-            </button>
-            <button
-              onClick={updateHandler}
-              className="bg-green-600 text-white py-2 p-5 rounded-md hover:bg-green-900 hover:text-white"
-            >
-              Update Flight
-            </button>
+            {signedIn ? (
+              <>
+                <button
+                  onClick={deleteHandler}
+                  className="bg-red-600 text-white py-2 p-5 rounded-md hover:bg-red-900 hover:text-white"
+                >
+                  Delete Flight
+                </button>
+                <button
+                  onClick={updateHandler}
+                  className="bg-green-600 text-white py-2 p-5 rounded-md hover:bg-green-900 hover:text-white"
+                >
+                  Update Flight
+                </button>
+              </>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </div>

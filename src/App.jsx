@@ -6,7 +6,7 @@ import UserNavBar from './Components/UserComponents/UserNavBar'
 
 const App = () => {
   return (
-    <div>
+    <div className=''>
       <UserEmailContext>
         <UserNavBar />
         <RoutesComp />
