@@ -147,6 +147,10 @@ public class FlightService {
         bookingRepo.save(temp.get());
     }
 
+    public List<FlightsModel>getFlightsByCost(){
+        return flightRepo.sortbyFlightsCost();
+    }
+
 
 }
 

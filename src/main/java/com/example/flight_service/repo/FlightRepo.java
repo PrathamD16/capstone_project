@@ -14,7 +14,10 @@ public interface FlightRepo extends JpaRepository<FlightsModel, Long> {
     List<FlightsModel>searchFlightAdmin(String src, String des, String date);
 //    For use search
 //    For Micro-service
-    @Query(nativeQuery = true, value = "SELECT * FROM flights WHERE (source LIKE CONCAT(:src, '%') AND destination LIKE CONCAT(:des, '%')) AND DATE(dept_time) = :date AND total_seats - booked_seats > 0")
+    @Query(nativeQuery = true, value = "SELECT * FROM flights WHERE (source LIKE CONCAT(:src, '%') AND destination LIKE CONCAT(:des, '%')) AND DATE(dept_time) = :date AND total_seats - booked_seats > 0 ORDER BY (total_seats - booked_seats) DESC")
     List<FlightsModel>searchFlightUser(String src, String des, String date);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM flights ORDER BY cost ASC")
+    List<FlightsModel>sortbyFlightsCost();
 
 }

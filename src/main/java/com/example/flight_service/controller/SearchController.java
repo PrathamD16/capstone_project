@@ -56,5 +56,10 @@ public class SearchController {
 //        return ResponseEntity.status(HttpStatus.OK).body(res);
 //    }
 
+    @GetMapping("/sortflight")
+    public List<FlightsModel> sortFlightsBYCost(){
+        return flightService.getFlightsByCost();
+    }
+
 
 }
