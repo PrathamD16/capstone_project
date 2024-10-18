@@ -6,6 +6,7 @@ import UserDashboad from '../Components/UserComponents/UserDashboard'
 import BookingForm from '../Components/UserComponents/BookingForm';
 import ShowUserBooking from '../Components/UserComponents/ShowUserBooking';
 import UserNavBar from '../Components/UserComponents/UserNavBar';
+import FormComponent from '../Components/NewComponents/FormComponent';
 import HomePage from '../Components/HomePage';
 
 const RoutesComp = () => {
@@ -15,7 +16,7 @@ const RoutesComp = () => {
       <Route path='/login' element={<LoginPage />} />
       <Route path='/signup' element={<SignUpPage />} />
       <Route path='/user' element={<UserDashboad />} />
-      <Route path='/user/addBooking/:fid' element={<BookingForm />} />
+      <Route path='/user/addBooking/:fid' element={<FormComponent />} />
       <Route path='/user/showbooking' element={<ShowUserBooking />} />
     </Routes>
   )

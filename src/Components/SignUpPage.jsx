@@ -36,31 +36,31 @@ const SignUpPage = () => {
       return;
     }
 
-    if(email.includes('@') && email.includes('.com')){
+    if (!email.includes('@') && !email.includes('.com')) {
       setError('Invalid Email Format!!')
-      return ;
+      return;
     }
 
     const newUser = {
       email,
       password,
       username,
-      isAdmin:false,
+      isAdmin: false,
     }
 
     // console.log(newUser)
     axios.post(`http://localhost:8081/user-service/api/authenticate-auth/addUser`, newUser)
-    .then((res) => {
-      if(res.data === true){
-        nav("/login")
-      }
-      else{
-        setError('Email Id Already exists!! Use another email id')
-      }
-    })
-    .catch(err => {
-      
-    })
+      .then((res) => {
+        if (res.data === true) {
+          nav("/login")
+        }
+        else {
+          setError('Email Id Already exists!! Use another email id')
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
 
   }
 
@@ -86,8 +86,8 @@ const SignUpPage = () => {
             onChange={(e) => setUserName(e.target.value)}
             required
           />
-          
-          
+
+
           <input
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="password"

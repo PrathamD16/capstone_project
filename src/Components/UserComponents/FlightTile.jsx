@@ -19,6 +19,8 @@ const FlightTile = ({ flight }) => {
     nav(`/admin/editflight/${flight.id}`)
   }
 
+  let avail_seats = flight.total_seats - flight.booked_seats
+
   return (
     <div className="bg-gray-100 shadow-lg my-3 p-3 rounded-md x-5 px-[1rem]">
       <div className="flex justify-center">
@@ -66,11 +68,12 @@ const FlightTile = ({ flight }) => {
           </p>
           <p>Seats available: {flight.total_seats - flight.booked_seats}</p>
           <button
+            disabled={avail_seats <= 0}
             onClick={bookHandler}
-            className="bg-blue-600 text-white py-2 px-5 rounded-md
-              hover:bg-blue-900 hover:text-white"
+            className={`bg-blue-600 text-white py-2 px-5 rounded-md
+              hover:bg-blue-900 hover:text-white`}
           >
-            {signedIn > 0 ? `Book Ticket` : `Login/Signup`}
+            {signedIn === true ? `Book Ticket` : `Login/Signup`}
           </button>
         </div>
       </div>
