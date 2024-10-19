@@ -45,6 +45,11 @@ public class SearchController {
         return flightService.getSingleFlight(id);
     }
 
+    @GetMapping("/flightbook/{id}")
+    public FlightsModel getSingleFlightForBooking(@PathVariable long id){
+        return flightService.getSingleFlightForBooking(id);
+    }
+
     @GetMapping("/getsingleflight/{id}")
     public FlightsModel getSingleFlightForUpdate(@PathVariable long id){
         return flightService.getUpdateSingleFlight(id);

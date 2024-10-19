@@ -118,6 +118,14 @@ public class FlightService {
         return null;
     }
 
+    public FlightsModel getSingleFlightForBooking(long id){
+        Optional<FlightsModel>res = flightRepo.findById(id);
+        if(res.isPresent()){
+            return res.get();
+        }
+        return null;
+    }
+
     public int costOfFlight(long id){
         Optional<FlightsModel>res = flightRepo.findById(id);
         if(res.isPresent()){
