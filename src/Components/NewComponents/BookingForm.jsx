@@ -15,12 +15,14 @@ const BookingForm = () => {
   const { fid } = useParams();
 
   const { byEmail, signedIn } = useContext(UserEmailContext);
+  const [cost, setCost] = useState(0);
+  const [seats, setSeats] = useState(0)
+  const [flight, setFlight] = useState(null)
 
   const [cname, setCname] = useState("");
-  const [contact, setContact] = useState(0);
-  const [age, setAge] = useState(0);
+  const [contact, setContact] = useState(null);
+  const [age, setAge] = useState(null);
   const [gender, setGender] = useState("");
-  const [cost, setCost] = useState(0);
   const [error, setError] = useState("");
   const [btnDisable, setBtnDisable] = useState(true);
 
@@ -30,29 +32,27 @@ const BookingForm = () => {
   }
 
   useEffect(() => {
-    const getCost = async () => {
+    const getFlight = async () => {
       const res = await axios.get(
-        ` http://localhost:5000/flight-service/api/search/flight/${fid}`
+        ` http://localhost:5000/flight-service/api/search/flightbook/${fid}`
       );
-      setCost(res.data.cost);
+      setCost(res.data.cost)
+      setSeats(res.data.total_seats - res.data.booked_seats)
     };
-    getCost();
+    getFlight();
 
-    if (validateName(cname) === true && JSON.stringify(contact).length == 12 && age > 0) {
-      console.log(`Satisfied`)
+    if (validateName(cname) === true && JSON.stringify(contact).length == 12 && age > 0 && seats > 0) {
       setBtnDisable(false)
     }
     else {
       setBtnDisable(true)
     }
 
-    console.log(`Length of contact: ${JSON.stringify(contact).length}`)
-
   }, [cname, contact, age]);
 
   const submitHandler = (e) => {
     e.preventDefault()
-    const passengerDetail = {
+    const new_passenger = {
       cname, contact, age,
       gender, 
       by_email: byEmail,
@@ -61,7 +61,21 @@ const BookingForm = () => {
       fid: parseInt(fid)
     }
 
-    console.log(passengerDetail)
+    axios
+      .post(
+        "http://localhost:4000/passenger-service/api/bookCustomer",
+        new_passenger
+      )
+      .then(() => {
+        console.log(new_passenger);
+        setCname("")
+        setContact(0)
+        setAge(0)
+      })
+      .catch((err) => {
+        console.log(`seats are full`)
+      });
+
   }
 
   return (
@@ -72,13 +86,13 @@ const BookingForm = () => {
         </div>
         <form onSubmit={submitHandler} className='space-y-5'>
           <div className="flex">
-            <TextField type="text" className="flex-1" label="Name" variant='outlined' onChange={e => setCname(e.target.value)} />
+            <TextField value={cname} type="text" className="flex-1" label="Name" variant='outlined' onChange={e => setCname(e.target.value)} />
           </div>
           <div className="flex">
-            <TextField type="number" className="flex-1" label="Contact" variant='outlined' onChange={e => setContact(e.target.value)} />
+            <TextField value={contact} type="number" className="flex-1" label="Contact" variant='outlined' onChange={e => setContact(e.target.value)} />
           </div>
           <div className="flex">
-            <TextField type="number" className="flex-1" label="Age" variant='outlined' onChange={e => setAge(e.target.value)} />
+            <TextField value={age} type="number" className="flex-1" label="Age" variant='outlined' onChange={e => setAge(e.target.value)} />
           </div>
           <div>
             <p className='text-md font-semibold'>Select Gender</p>
