@@ -22,7 +22,7 @@ const UserNavBar = () => {
   }
 
   return (
-    <div className="top-0 sticky">
+    <div className="top-0 relative">
       <nav className="space-y-5 bg-gradient-to-l from-blue-500 to-slate-800 text-white py-3 px-[1rem]">
         <p className="text-xl">Welcome, to the SABA {signedIn ? username : ``}</p>
         <ul className="text-sm">
