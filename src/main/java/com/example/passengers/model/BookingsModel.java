@@ -25,5 +25,4 @@ public class BookingsModel {
 //    @JoinColumn(name = "fid", referencedColumnName = "Id")
 //    private FlightsModel flights; // Renamed for clarity
 
-
 }
