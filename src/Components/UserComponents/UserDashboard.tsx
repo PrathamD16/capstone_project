@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import FlightTile from './FlightTile'
 import { UserEmailContext } from '../../Context/CredContext'
+import Grid from '@mui/material/Grid2'
 
 const UserDashboard = () => {
-  const {date, updateDate} = useContext(UserEmailContext)
+  const { date, updateDate } = useContext(UserEmailContext)
   const [flights, setFlights] = useState([])
   const [src, setSrc] = useState("")
   const [des, setDes] = useState("")
@@ -21,10 +22,10 @@ const UserDashboard = () => {
       const res = await axios.get(`http://localhost:5000/flight-service/api/search/sortflight`)
       setFlights(res.data);
     }
-    if(!sort){
+    if (!sort) {
       fetchData()
     }
-    else{
+    else {
       fetcDateSort()
     }
   }, [des, src, date, sort])
@@ -40,18 +41,25 @@ const UserDashboard = () => {
         <button className='bg-blue-600 text-white py-2 px-5 rounded-md
               hover:bg-blue-900 hover:text-white' onClick={() => setSortBy(!sort)}>{!sort ? `Sort By Cost` : `Sort by availability`}</button>
       </div>
-      <div className='mx-5 '>
-        {
-          flights.map((flight, _i) => {
-            return (
-              <div key={_i}>
-                {/* Need to implement Delete button & Booking Button */}
-                <FlightTile flight={flight} />
-              </div>
-            )
-          })
-        }
-      </div>
+      <Grid className="items-center flex mx-5" container spacing={2}>
+        <Grid flex={2}>
+          Here will be the filter
+        </Grid>
+        <Grid flex={10}>
+          <div className='mx-5 '>
+            {
+              flights.map((flight, _i) => {
+                return (
+                  <div key={_i}>
+                    {/* Need to implement Delete button & Booking Button */}
+                    <FlightTile flight={flight} />
+                  </div>
+                )
+              })
+            }
+          </div>
+        </Grid>
+      </Grid>
     </div>
   )
 }

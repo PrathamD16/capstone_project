@@ -14,7 +14,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 const BookingForm = () => {
 
   const { fid } = useParams()
-
   const { byEmail, signedIn } = useContext(UserEmailContext);
   const nav = useNavigate()
 
@@ -30,7 +29,6 @@ const BookingForm = () => {
   const [gender, setGender] = useState("female");
 
   const [list, setList] = useState([])
-
   const [btnDisable, setBtnDisable] = useState(false)
 
   useEffect(() => {
@@ -62,7 +60,7 @@ const BookingForm = () => {
       fid
     }
 
-    if (avaSeats <= 0) {
+    if (list.length >= avaSeats) {
       setError("Seats are full for this flight")
       setTimeout(() => {
         setError("")
@@ -75,38 +73,18 @@ const BookingForm = () => {
       return;
     }
 
-    axios
-      .post(
-        "http://localhost:4000/passenger-service/api/bookCustomer",
-        newPassenger
-      )
-      .then((res) => {
-        console.log(res.data)
-        setList([...list, res.data])
-        setCname("")
-        setContact("")
-        setAge("")
-        setGender("female")
-        setError("")
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setList([...list, newPassenger])
+    console.log(`Length of list: ${list.length}`)
+    setCname("")
+    setContact("")
+    setAge("")
+    setGender("female")
+    setError("")
   }
 
   const deleteHandler = (index) => {
     console.log(`deleted ${index}`)
-    setList(list.filter((booking) => booking.bid !== index))
-    axios
-      .delete(
-        `http://localhost:4000/passenger-service/api/deleteBooking/${index}`
-      )
-      .then(() => {
-        console.log(`Deleted the data ${index}`);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setList(list.filter((booking, _i) => _i !== index))
   }
 
   const paymentHandler = () => {
@@ -115,16 +93,33 @@ const BookingForm = () => {
       setLoading(false)
       nav("/user/showbooking")
     }, 4000)
+
+    list.map((booking, _i) => {
+      axios
+        .post(
+          "http://localhost:4000/passenger-service/api/bookCustomer",
+          booking
+        )
+        .then((res) => {
+          console.log(res.data)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
   }
 
   return (
-    <div className={`relative ${loading ? "backdrop-blur-sm" : ""}`}>
+    <div className={`relative`}>
+      {/* Loader with backdrop blur */}
       {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75 backdrop-blur-md">
           <CircularProgress color="inherit" />
+          <p className='mx-2'>Please wait..</p>
         </div>
       )}
-      <Grid container spacing={2}>
+
+      <Grid className={`relative`} container spacing={2}>
         {error && <Alert className='absolute' severity='error'>{error}</Alert>}
         <Grid item flex={6} display="flex" flexDirection="column" justifyContent="space-between">
           <div className="flex items-center justify-center bg-gray-100">
@@ -200,7 +195,7 @@ const BookingForm = () => {
                           <p>Gender: <span className="font-semibold">{booking.gender.toUpperCase()}</span></p>
                         </div>
                         <div className="flex-shrink-0">
-                          <Button onClick={() => deleteHandler(booking.bid)} color="error">
+                          <Button onClick={() => deleteHandler(_i)} color="error">
                             <DeleteForeverOutlined />
                           </Button>
                         </div>
