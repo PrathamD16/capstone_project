@@ -35,16 +35,16 @@ public class PassengerService {
     WebClient webClient;
 
 
-    public String addBooking(BookingsModel model){
+    public BookingsModel addBooking(BookingsModel model){
 //        Optional<FlightsModel> obj = flightRepo.findById(Long.valueOf(model.getFlights().getId()));
         Optional<FlightsModel> obj = flightRepo.findById(Long.valueOf(model.getFid()));
         if(obj.isPresent()){
             obj.get().setBooked_seats(obj.get().getBooked_seats() + 1);
             flightRepo.save(obj.get());
-            bookingRepo.save(model);
-            return "Seat booked!!";
+            return bookingRepo.save(model);
+
         }
-        return "No seats available";
+        return null;
     }
 
     public boolean deleteBookingById(long id){
