@@ -1,118 +1,164 @@
 import React, { useState, useEffect, useContext } from 'react'
-import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import Grid from '@mui/material/Grid2'
+import { useParams } from 'react-router-dom'
 import { UserEmailContext } from "../../Context/CredContext";
-import { TextField } from '@mui/material';
+import { Button, Stack, TextField } from '@mui/material'
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Button from '@mui/material/Button';
+import axios from 'axios'
+import { DeleteForeverOutlined, DeleteForeverRounded } from '@mui/icons-material';
 
 const BookingForm = () => {
 
-  const nav = useNavigate();
-
-  const { fid } = useParams();
+  const { fid } = useParams()
 
   const { byEmail, signedIn } = useContext(UserEmailContext);
-  const [cost, setCost] = useState(0);
-  const [seats, setSeats] = useState(0)
-  const [flight, setFlight] = useState(null)
 
+  const [loading, setLoading] = useState(false)
+  const [cost, setCost] = useState(0)
+  const [avaSeats, setAvaSeats] = useState(0)
+
+  // Passenger detail
   const [cname, setCname] = useState("");
-  const [contact, setContact] = useState(null);
-  const [age, setAge] = useState(null);
+  const [contact, setContact] = useState(0);
+  const [age, setAge] = useState(0);
   const [gender, setGender] = useState("");
-  const [error, setError] = useState("");
-  const [btnDisable, setBtnDisable] = useState(true);
 
-  function validateName(name) {
-    const namePattern = /^[A-Za-z]+([ '-][A-Za-z]+)*$/;
-    return namePattern.test(name);
-  }
+  const [list, setList] = useState([])
+
+  const [btnDisable, setBtnDisable] = useState(false)
+
 
   useEffect(() => {
-    const getFlight = async () => {
-      const res = await axios.get(
-        ` http://localhost:5000/flight-service/api/search/flightbook/${fid}`
-      );
-      setCost(res.data.cost)
-      setSeats(res.data.total_seats - res.data.booked_seats)
-    };
-    getFlight();
-
-    if (validateName(cname) === true && JSON.stringify(contact).length == 12 && age > 0 && seats > 0) {
-      setBtnDisable(false)
+    const getFlightDetail = async () => {
+      try {
+        const res = await axios.get(
+          ` http://localhost:5000/flight-service/api/search/flight/${fid}`
+        );
+        setCost(res.data.cost)
+        setAvaSeats(res.data.total_seats - res.data.booked_seats)
+      } catch (e) {
+        console.log(e)
+      }
     }
-    else {
-      setBtnDisable(true)
-    }
+    getFlightDetail()
+    console.log(avaSeats)
+  }, [fid, list])
 
-  }, [cname, contact, age]);
+  useEffect(() => {
+    setBtnDisable(!(JSON.stringify(contact).trim().length === 12 && contact > 0 && age > 0))
+  }, [contact, cname, age])
+
+
 
   const submitHandler = (e) => {
     e.preventDefault()
-    const new_passenger = {
-      cname, contact, age,
-      gender, 
+    const newPassenger = {
+      cname, age, gender, contact,
+      cost,
       by_email: byEmail,
-      status: 'confirmed',
-      cost, 
-      fid: parseInt(fid)
+      status: `confirmed`,
+      fid
+    }
+
+    if (avaSeats <= 0) {
+      console.log(`Seats are full`)
+      return;
     }
 
     axios
       .post(
         "http://localhost:4000/passenger-service/api/bookCustomer",
-        new_passenger
+        newPassenger
       )
-      .then(() => {
-        console.log(new_passenger);
-        setCname("")
-        setContact(0)
-        setAge(0)
+      .then((res) => {
+        console.log(res.data)
+        setList([...list, res.data])
       })
       .catch((err) => {
-        console.log(`seats are full`)
+        console.log(err);
+      });
+  }
+
+
+  const deleteHandler = (index) => {
+    console.log(`deleted ${index}`)
+    setList(list.filter((booking) => booking.bid !== index))
+
+    axios
+      .delete(
+        `http://localhost:4000/passenger-service/api/deleteBooking/${index}`
+      )
+      .then(() => {
+        console.log(`Deleted the data ${index}`);
+      })
+      .catch((err) => {
+        console.log(err);
       });
 
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-[40rem]">
-        <div className='flex justify-center my-5 '>
-          <p className='text-xl font-bold'>Passenger detail form</p>
+    <Grid container spacing={2}>
+      <Grid flex={7}>
+        <div className='flex items-center justify-center h-screen bg-gray-100'>
+          <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+            <h3 className="text-xl font-semibold text-center mb-4">Passenger Detail Form</h3>
+            <form className='space-y-5' onSubmit={submitHandler}>
+              <div className='flex'>
+                <TextField onChange={e => setCname(e.target.value)} type='text' value={cname} className='flex-1' label="Name" required />
+              </div>
+              <div className='flex'>
+                <TextField onChange={e => setContact(e.target.value)} type='number' value={contact} className='flex-1' label="Contact" required />
+              </div>
+              <div className='flex'>
+                <TextField onChange={e => setAge(e.target.value)} type='number' value={age} className='flex-1' label="Age" required />
+              </div>
+              <RadioGroup
+                row
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue="female"
+                name="radio-buttons-group"
+                onClick={e => setGender(e.target.value)}
+              >
+                <FormControlLabel value="female" control={<Radio />} label="Female" />
+                <FormControlLabel value="male" control={<Radio />} label="Male" />
+                <FormControlLabel value="other" control={<Radio />} label="Other" />
+              </RadioGroup>
+              <div className='flex'>
+                <Button disabled={btnDisable} type='submit' className='flex-1' variant='contained'>Submit</Button>
+              </div>
+            </form>
+          </div>
         </div>
-        <form onSubmit={submitHandler} className='space-y-5'>
-          <div className="flex">
-            <TextField value={cname} type="text" className="flex-1" label="Name" variant='outlined' onChange={e => setCname(e.target.value)} />
-          </div>
-          <div className="flex">
-            <TextField value={contact} type="number" className="flex-1" label="Contact" variant='outlined' onChange={e => setContact(e.target.value)} />
-          </div>
-          <div className="flex">
-            <TextField value={age} type="number" className="flex-1" label="Age" variant='outlined' onChange={e => setAge(e.target.value)} />
-          </div>
-          <div>
-            <p className='text-md font-semibold'>Select Gender</p>
-            <RadioGroup
-              row
-              defaultValue="female"
-              name="gender-radio-button"
-              onChange={e => setGender(e.target.value)}
-            >
-              <FormControlLabel value="female" control={<Radio />} label="Female" />
-              <FormControlLabel value="male" control={<Radio />} label="Male" />
-              <FormControlLabel value="other" control={<Radio />} label="Other" />
-            </RadioGroup>
-          </div>
-          <div className='flex'>
-            <Button type='submit' disabled={btnDisable} className='flex-1' variant="contained">Submit</Button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </Grid>
+      <Grid flex={5}>
+        <div className='flex'>
+          <Button disabled={list.length <= 0 ? true : false} variant='contained' color='success' className='flex-1'>Proceed for payment</Button>
+        </div>
+        {
+          list.length <= 0 ? `List is empty` : <>
+            {
+              list.map((booking, _i) => {
+                return (
+                  <Stack className='bg-slate-200 text-sm px-2 rounded-md py-1 my-2' key={_i}>
+                    <div className='flex justify-between items-center'>
+                      <div>
+                        <p>Name: {booking.cname}</p>
+                        <p>Age: {booking.age}</p>
+                        <p>Gender: {booking.gender}</p>
+                      </div>
+                      <Button onClick={() => deleteHandler(booking.bid)} color="error"><DeleteForeverOutlined /></Button>
+                    </div>
+                  </Stack>
+                )
+              })
+            }
+          </>
+        }
+      </Grid>
+    </Grid>
   )
 }
 
