@@ -1,5 +1,6 @@
 package com.example.passengers.service;
 
+import com.example.passengers.globalexception.SeatingException;
 import com.example.passengers.model.AllFlightModel;
 import com.example.passengers.model.BookingsModel;
 import com.example.passengers.model.FlightsModel;
@@ -11,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -39,10 +41,17 @@ public class PassengerService {
 //        Optional<FlightsModel> obj = flightRepo.findById(Long.valueOf(model.getFlights().getId()));
         Optional<FlightsModel> obj = flightRepo.findById(Long.valueOf(model.getFid()));
         if(obj.isPresent()){
-            obj.get().setBooked_seats(obj.get().getBooked_seats() + 1);
-            flightRepo.save(obj.get());
-            bookingRepo.save(model);
-            return "Seat booked!!";
+            int total_seats = obj.get().getTotal_seats();
+            int booked_seats = obj.get().getBooked_seats();
+            if(total_seats - booked_seats > 0){
+                obj.get().setBooked_seats(obj.get().getBooked_seats() + 1);
+                flightRepo.save(obj.get());
+                bookingRepo.save(model);
+                return "Seat booked!!";
+            }
+
+            throw new SeatingException("No seats available");
+
         }
         return "No seats available";
     }
