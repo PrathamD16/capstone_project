@@ -5,44 +5,68 @@ import BookingTile from "./BookingTile";
 import CircularProgress from '@mui/material/CircularProgress';
 
 const ShowUserBooking = () => {
-  const [count, setCount] = useState(0);
   const [bookingList, setBookingList] = useState([]);
   const { byEmail } = useContext(UserEmailContext);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const getData = async () => {
-      setLoading(true)
-      const res = await axios.get(
-        `http://localhost:4000/passenger-service/api/getBookingByEmail?email=${byEmail}`
-      );
-      setBookingList(res.data);
-      setLoading(false)
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await axios.get(
+          `http://localhost:4000/passenger-service/api/getBookingByEmail?email=${byEmail}`
+        );
+        setBookingList(res.data);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Failed to fetch booking data. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
     };
-    getData();
-    console.log(bookingList.length)
-  }, [count]);
+
+    if (byEmail) {
+      getData();
+    }
+  }, [byEmail]);
+
+  const handleDelete = async (bookingId) => {
+    try {
+      await axios.delete(`http://localhost:4000/passenger-service/api/deleteBooking/${bookingId}`);
+      setBookingList(prevList => prevList.filter(booking => booking.bookingId !== bookingId));
+    } catch (err) {
+      console.error("Error deleting booking:", err);
+      setError("Failed to delete booking. Please try again later.");
+    }
+  };
 
   return (
     <div className="space-y-5">
-      {
-        loading ? <div className="flex items-center justify-center h-screen">
+      {loading ? (
+        <div className="flex items-center justify-center h-screen">
           <CircularProgress color="inherit" />
-        </div> : <>
+        </div>
+      ) : error ? (
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-3xl">{error}</p>
+        </div>
+      ) : (
+        <>
           {bookingList.length > 0 ? (
-            bookingList.map((book, _i) => {
-              return (
-                <div key={_i} className="px-5">
-                  <BookingTile trigger={setCount} book={book} />
-                </div>
-              );
-            })
+            bookingList.map((book, _i) => (
+              <div key={_i} className="px-5">
+                <BookingTile book={book} onDelete={handleDelete} />
+              </div>
+            ))
           ) : (
             <div className="flex items-center h-screen justify-center">
               <p className="text-3xl">No Booking Records</p>
             </div>
-          )}</>
-      }
+          )}
+        </>
+      )}
     </div>
   );
 };

@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { TextField } from "@mui/material";
 
 const AddFlights = () => {
   const [name, setName] = useState("");
-  const [cost, setCost] = useState(0);
-  const [totalSeats, setTotalSeats] = useState(0);
-  const [date, setDate] = useState(null); // Use null for initial unselected date
-  const [time, setTime] = useState(null); // Use null for initial unselected time
+  const [cost, setCost] = useState("");
+  const [totalSeats, setTotalSeats] = useState("");
+  const [date, setDate] = useState(null); // Use empty string for initial unselected date
+  const [time, setTime] = useState(null); // Use empty string for initial unselected time
   const [destination, setDestination] = useState("");
   const [source, setSource] = useState("");
-  const [booked, setBookedSeats] = useState(0);
-  const [btnDisable, setBtnDisable] = useState(true)
-  const [minDate, setMinDate] = useState()
+  const [booked, setBookedSeats] = useState("");
+  const [btnDisable, setBtnDisable] = useState(true);
+  const [minDate, setMinDate] = useState("");
 
   const nav = useNavigate();
 
@@ -21,106 +22,134 @@ const AddFlights = () => {
 
     const newPlane = {
       name,
-      cost,
-      total_seats: totalSeats,
+      cost: Number(cost),
+      total_seats: Number(totalSeats),
       dept_time: date + "T" + time + ":00", // Combine date and time efficiently
       source,
       destination,
-      booked_seats: booked,
+      booked_seats: Number(booked),
     };
 
     axios
-      .post(
-        `http://localhost:5000/flight-service/api/admin/addFlights`,
-        newPlane
-      )
-      .then((x) => {
-        
+      .post(`http://localhost:5000/flight-service/api/admin/addFlights`, newPlane)
+      .then(() => {
         nav("/admin");
       })
       .catch((err) => {
-        
+        console.error(err);
       });
-
-    // Handle sending the data to your backend here (e.g., using axios)
   };
 
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     setMinDate(today);
-    if(booked > -1 && booked < totalSeats && totalSeats > 0 && cost > -1 && name != '' && destination != '' && source != '' && date != null && time != null){
-      setBtnDisable(false)
-    }
-    else{
-      setBtnDisable(true)
-    }
-  }, [booked, totalSeats, cost, date, time, source, destination, name])
+
+    const isFormValid =
+      name.trim() !== "" &&
+      source.trim() !== "" &&
+      destination.trim() !== "" &&
+      date !== "" &&
+      time !== "" &&
+      !isNaN(cost) && Number(cost) >= 5000 &&
+      !isNaN(totalSeats) && Number(totalSeats) > 0 &&
+      !isNaN(booked) && Number(booked) >= 0 &&
+      Number(booked) <= Number(totalSeats);
+
+    setBtnDisable(!isFormValid);
+  }, [name, source, destination, date, time, cost, totalSeats, booked]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-semibold text-center mb-6">Add Flight</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-100 to-purple-100 p-4">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+        <h2 className="text-3xl font-bold text-center mb-6 text-blue-700">
+          Add Flight Form
+        </h2>
         <form onSubmit={addFlightHandler} className="space-y-4">
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
-            placeholder="Enter flight name"
+          <TextField
+            className="w-full"
+            label="Enter flight name"
             type="text"
+            color="primary"
+            variant="outlined"
+            value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+          <TextField
+            className="w-full"
             type="number"
-            placeholder="Enter Cost of flight per seat"
+            color="primary"
+            label="Enter Cost of flight per seat"
+            variant="outlined"
+            value={cost}
             onChange={(e) => setCost(e.target.value)}
             required
           />
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+          <TextField
+            className="w-full"
             type="number"
-            placeholder="Enter total seats available in plane"
+            color="primary"
+            label="Enter total seats available in plane"
+            variant="outlined"
+            value={totalSeats}
             onChange={(e) => setTotalSeats(e.target.value)}
             required
           />
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+          <TextField
+            className="w-full"
             type="number"
-            placeholder="Enter number booked seats"
+            color="primary"
+            label="Enter number booked seats"
+            variant="outlined"
+            value={booked}
             onChange={(e) => setBookedSeats(e.target.value)}
             required
           />
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+          <TextField
+            className="w-full"
             type="date"
-            min={minDate}
+            color="primary"
+            InputLabelProps={{ shrink: true }}
+            variant="outlined"
+            inputProps={{ min: minDate }}
+            value={date}
             onChange={(e) => setDate(e.target.value)}
             required
           />
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+          <TextField
+            className="w-full"
             type="time"
+            color="primary"
+            InputLabelProps={{ shrink: true }}
+            variant="outlined"
+            value={time}
             onChange={(e) => setTime(e.target.value)}
             required
           />
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
-            placeholder="Enter source"
+          <TextField
+            className="w-full"
+            label="Enter source"
             type="text"
+            color="primary"
+            variant="outlined"
+            value={source}
             onChange={(e) => setSource(e.target.value)}
             required
           />
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
-            placeholder="Enter Destination"
+          <TextField
+            className="w-full"
+            label="Enter Destination"
             type="text"
+            color="primary"
+            variant="outlined"
+            value={destination}
             onChange={(e) => setDestination(e.target.value)}
             required
           />
           <button
             disabled={btnDisable}
             type="submit"
-            // className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
-            className={`w-full text-white py-2 rounded-md ${btnDisable ? `bg-blue-300` : `bg-blue-600 hover:bg-blue-700 transition duration-200`}`}
+            className={`w-full text-white py-2 rounded-md ${btnDisable ? `bg-purple-300` : `bg-purple-600 hover:bg-purple-700 transition duration-200`}`}
           >
             Add Flight
           </button>
