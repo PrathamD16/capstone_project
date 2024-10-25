@@ -37,23 +37,21 @@ public class PassengerService {
     WebClient webClient;
 
 
-    public String addBooking(BookingsModel model){
+    public List<BookingsModel> addBooking(List<BookingsModel>passList){
 //        Optional<FlightsModel> obj = flightRepo.findById(Long.valueOf(model.getFlights().getId()));
-        Optional<FlightsModel> obj = flightRepo.findById(Long.valueOf(model.getFid()));
-        if(obj.isPresent()){
-            int total_seats = obj.get().getTotal_seats();
-            int booked_seats = obj.get().getBooked_seats();
-            if(total_seats - booked_seats > 0){
+        List<BookingsModel>res = new ArrayList<>();
+        Optional<FlightsModel>obj = null;
+        for(BookingsModel model : passList) {
+            obj = flightRepo.findById(Long.valueOf(model.getFid()));
+            System.out.println(model.getCname());
+            if (obj.isPresent()) {
                 obj.get().setBooked_seats(obj.get().getBooked_seats() + 1);
                 flightRepo.save(obj.get());
                 bookingRepo.save(model);
-                return "Seat booked!!";
+                res.add(model);
             }
-
-            throw new SeatingException("No seats available");
-
         }
-        return "No seats available";
+        return res;
     }
 
     public boolean deleteBookingById(long id){

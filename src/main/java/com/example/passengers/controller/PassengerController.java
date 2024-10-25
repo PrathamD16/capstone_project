@@ -27,8 +27,8 @@ public class PassengerController {
     }
 
     @PostMapping("/bookCustomer")
-    public ResponseEntity<String>bookPassenger(@RequestBody BookingsModel model){
-        model.setStatus("confirmed");
+    public ResponseEntity<List<BookingsModel>>bookPassenger(@RequestBody List<BookingsModel> model){
+//        model.setStatus("confirmed");
         return ResponseEntity.status(HttpStatus.OK).body(passengerService.addBooking(model));
     }
 
