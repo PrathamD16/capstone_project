@@ -26,6 +26,9 @@ public class FlightService {
     BookingRepo bookingRepo;
 
     public FlightsModel addFlight(FlightsModel model){
+        model.setName(model.getName().toUpperCase());
+        model.setSource(model.getSource().toUpperCase());
+        model.setDestination(model.getDestination().toUpperCase());
         AllFlightModel o1 = new AllFlightModel();
         setObject(model, o1);
         backUpFlight.save(o1);
